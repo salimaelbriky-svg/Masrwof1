@@ -1,0 +1,93 @@
+﻿@page "/expense/{action}" 
+@page "/expense/{action}/{id:guid}"
+
+@inject IExpenseService ExpenseService
+@inject NavigationManager Navigation
+
+<div dir="rtl" style="text-align: right; max-width: 600px; margin: auto;">
+     <EditForm Model="@expense" OnValidSubmit="HandleSubmit">
+        <DataAnnotationsValidator />
+
+        <p>
+            <label><RadzenIcon Icon="description" />المصروف</label>
+            <input type="text" @bind-value="expense.Name" disabled="@isReadOnly" style="width:100%;" required />
+        </p>
+
+        <p>
+            <label><RadzenIcon Icon="payment" />المبلغ (د.ل)</label>
+            <input type="number" step="0.01" @bind-value="expense.Amount" disabled="@isReadOnly" style="width:100%;" required />
+        </p>
+        
+        <p>
+            <label><RadzenIcon Icon ="category"/>الفئة</label>
+            <select @bind="expense.Category" disabled="@isReadOnly" style="width:100%;" >
+                <option value="طعام">طعام</option>
+                <option value="مواصلات">مواصلات</option>
+                <option value="فواتير">فواتير</option>
+                <option value="ترفيه">ترفيه</option>
+                <option value="صحة وعلاج ">صحة وعلاج </option>
+                <option value="أخرى">أخرى</option>
+            </select>
+        </p>
+
+        <p>
+            <label><Radzen Icon="event"/>التاريخ</label>
+            <input type="date" @bind-value="expense.Date" disabled="@isReadOnly" style="width:100%;" />
+        </p>
+
+        @if (isReadOnly)
+        {
+            <div style="background: #f0f0f0; padding: 10px; margin: 10px 0;">
+                <spane><RadzenIcon Icon="monetization_on"/>إجمالي القيمة:</spane>
+                <strong>@expense.Amount.ToString("C2", CultureInfo.GetCultureInfo("ar-LY"))</strong>
+            </div>
+        }
+
+        <p style="text-align: left;">
+            @if (!isReadOnly)
+            {
+                <button type="submit">
+                    <RadzenIcon Icon="save" /> @(Action.Equals("edit", StringComparison.OrdinalIgnoreCase) ? "حفظ" : "إضافة")
+                </button>
+            }
+            <button type="button" @onclick="GoBack">
+                <RadzenIcon Icon="arrow_back" /> @(isReadOnly ? "إلغاء" : "رجوع")
+            </button>
+        </p>
+    </EditForm>
+</div>
+
+@code {
+        [Parameter] public string Action { get; set; } = "add";
+        [Parameter] public Guid? Id { get; set; }
+
+    private Expense expense = new();
+    private bool isReadOnly;
+
+    protected override void OnInitialized()
+    {
+        isReadOnly = Action.Equals("view", StringComparison.OrdinalIgnoreCase);
+
+        if (Id.HasValue && !Action.Equals("add", StringComparison.OrdinalIgnoreCase))
+        {
+               expense = ExpenseService.GetExpenseById(Id.Value) ?? new();
+               if (expense.Id == Guid.Empty) Navigation.NavigateTo("/expenses");
+            }
+            else
+            {
+                expense = new Expense { Date = DateTime.Now, Category = "طعام" };
+            }
+        }
+
+    private void HandleSubmit()
+    {
+        if (Action.Equals("edit", StringComparison.OrdinalIgnoreCase))
+            ExpenseService.updateExpense(expense);
+        else
+            ExpenseService.AddExpense(expense);
+
+        GoBack();
+    }
+
+    private void GoBack() => Navigation.NavigateTo("/expenses");
+  } 

@@ -1,4 +1,8 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Masrwof1.Data;
+using Masrwof1.Interfaces;
+using Masrwof1.Services;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Masrwof1
 {
@@ -17,11 +21,27 @@ namespace Masrwof1
             builder.Services.AddMauiBlazorWebView();
 
 #if DEBUG
-    		builder.Services.AddBlazorWebViewDeveloperTools();
-    		builder.Logging.AddDebug();
+            builder.Services.AddBlazorWebViewDeveloperTools();
+            builder.Logging.AddDebug();
 #endif
+            string dbPath = Path.Combine(FileSystem.AppDataDirectory, "masrwof.db");
 
-            return builder.Build();
+
+            builder.Services.AddDbContext<AppDbContext>(options =>
+                options.UseSqlite($"Data Source={dbPath}"),
+                ServiceLifetime.Scoped);
+
+            builder.Services.AddScoped<IExpenseService, ExpenseService>();
+
+            var app = builder.Build();
+
+            using (var scope = app.Services.CreateScope())
+            {
+                var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+                context.Database.EnsureCreated();
+            }
+
+            return app;
         }
     }
 }
