@@ -1,0 +1,43 @@
+﻿@page "/category/add"
+
+@using Masrwof1.Models
+@using Masrwof1.Interfaces
+
+@inject ICategoryServise CategoryServise
+@inject NavigationManager Navigation
+
+<div class="expense-form-container mt-4" dir="rtl" style="text-align: right;">
+    <EditForm Model="@category" OnValidSubmit="HandleSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="expense-form-group">
+        <label class="expense-form-label">اسم الفئة</label>
+        <input type="text" class="expense-form-input" @bind="category.Name" required />
+    </div>
+
+    <div class="expense-actions">
+        <button type="submit" class="btn btn-primary">إضافة</button>
+        <button type="button" class="btn btn-secondary" @onclick="GoBack">إلغاء</button>
+    </div>
+</EditForm>
+</div>
+
+
+@code {
+
+    private Category category = new();
+    private object CategorySevise;
+
+    private void HandleSubmit()
+    {
+        CategoryServise.AddCategorry(category);
+        GoBack();
+    }
+
+    private void GoBack()
+    {
+        Navigation.NavigateTo("/categorylist");
+    }
+
+}

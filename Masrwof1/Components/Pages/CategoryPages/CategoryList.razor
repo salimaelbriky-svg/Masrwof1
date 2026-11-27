@@ -1,0 +1,79 @@
+﻿@page "/categorylist"
+
+@using System.Globalization
+@using Masrwof1.Models
+@using Masrwof1.Interfaces
+
+@inject ICategoryServise CategoryServise
+@inject NavigationManager Navigation
+
+<div class="container mt-4" dir="rtl" style="text-align: right">
+    <div class="d-flex justify-content-between align-items-center">
+        
+        <h2 class="text-primary fw-bold"> Category List</h2>
+        <button class="btn btn-success px-4 fw-bold" @onclick='() => Navigation.NavigateTo("/category/add")'>
+            إضافة فئة:
+            </button>
+    </div>
+    <div class="card bg-light border-0 shadow-sm mb-4">
+        <div class="card-body text-center">
+            <span class="text-muted d-block mb-1"> إجمالي الفئات: </span>
+            
+            <h3 class="text-danger fw-bold mb-0">@CategoryServise.GetTotalCategories()</h3>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+            @if (categories == null || !categories.Any())
+            {
+                <div class="text-center my-5 py-4">
+                    <p class="text-muted fs-5 mb-0"> لا توجد فئات مسجلة حالياً</p>
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0 text-center">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>الاسم</th>
+                                <th>الاجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in categories)
+                            {
+                                <tr>
+                                    <td>@item.Name</td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <button class="btn btn-sm btn-outline-primary"@onclick='() => Navigation.NavigateTo($"/category/edit/{item.Id}")'>تعديل</button>
+
+                                            <button class="btn btn-sm btn-outline-danger"@onclick='() => Navigation.NavigateTo($"/category/delete/{item.Id}")'>حذف</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+@code {
+    private List<Category> categories = new();
+
+    protected override void OnInitialized()
+    {
+        categories = CategoryServise.GetAllCategories();
+    }
+
+    private void DeleteCategory(Guid id)
+    {
+        CategoryServise.DeleteCategory(id);
+        categories = CategoryServise.GetAllCategories();
+    }
+
+}

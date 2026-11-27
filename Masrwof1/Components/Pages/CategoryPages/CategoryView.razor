@@ -1,0 +1,63 @@
+﻿@using Masrwof1.Models
+@using Masrwof1.Interfaces
+
+@inject ICategoryServise CategoryServise
+@inject NavigationManager Navigation
+
+<div class="expense-form-container mt-4" dir="rtl" style="text-align: right;">
+    <EditForm Model="@category" OnInvalidSubmit="HandelSubmit">
+        <DataAnnotationsValidator/>
+        <ValidationSummary/>
+
+        <div class="expense-form-group">
+            <label class="expense-form-label"> إسم الفئة</label>
+            <input type="text" class="expense-form-control" @bind="category.Name" required />
+        </div>
+
+        <div class="expense-summary">
+            <span>الوضع الحالي:</span>
+            <strong>@(Id.HasValue ? "تعديل" : "إضافة")</strong>
+        </div>
+
+        <div class="expense-actions">
+            <button type="submit" class="expense-btn">@(Id.HasValue ? "تحديث" : "حفظ")</button>
+             <button type="button" class="expense-btn" @onclick="GoBack"> رجوع
+             </button>
+        </div>
+    </EditForm>
+</div>
+@code {
+    [Parameter]
+    public Guid? Id { get; set; }
+    private Category category = new();
+    protected override void OnInitialized()
+    {
+        if(Id.HasValue && Id.Value != Guid.Empty)
+        {
+            category = CategoryServise.GetCategoryById(Id.Value) ?? new();
+
+            if (category.Id == Guid.Empty)
+            {
+                Navigation.NavigateTo("/categorylist");
+            }
+        }
+    }
+
+    private void HandelSubmit()
+    {
+        if(Id.HasValue && Id.Value != Guid.Empty)
+        {
+            CategoryServise.updateCategory(category);
+        }
+        else
+        {
+            CategoryServise.AddCategorry(category);
+        }
+        GoBack();
+    }
+    private void GoBack()
+    {
+        Navigation.NavigateTo("/categorylist");
+    }
+
+}
