@@ -3,6 +3,7 @@ using Masrwof1.Interfaces;
 using Masrwof1.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Radzen;
 
 namespace Masrwof1
 {
@@ -17,6 +18,8 @@ namespace Masrwof1
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                 });
+
+            builder.Services.AddRadzenComponents();
 
             builder.Services.AddMauiBlazorWebView();
 
