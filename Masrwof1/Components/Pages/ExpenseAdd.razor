@@ -2,6 +2,8 @@
 
 @inject IExpenseService ExpenseService
 @inject NavigationManager Navigation
+@inject ICategoryService CategoryService
+
 
 <div class="expense-form-container">
     <EditForm Model="@expense" OnValidSubmit="HandelSubmit">
@@ -19,14 +21,15 @@
 
         <div class="expense-form-group">
             <label class="expense-form-label">الفئة</label>
-            <select class="expensse-form-input" @bind="expense.Category">
-                <option value="طعام"> طعام</option>
-                <option value="مواصلات">مواصلات</option>
-                <option value="فواتير">فواتير</option>
-                <option value="ترفيه">ترفيه</option>
-                <option value="صحة وعلاج">صحة وعلاج</option>
-                <option value="أخرى">أخرى</option>
-            </select>
+            
+
+           <select class="expense-form-input" @bind="expense.Category">
+               <option value=""> إختر الفئة</option>
+                 @foreach (var category in Categories)
+                   {
+                      <option value="@category.Name">@category.Name</option>
+                   }
+                </select>
         </div>
 
         <div class="expense-form-group">
@@ -42,7 +45,8 @@
 </div>
 
 @code {
-    private Expense expense = new() { Date = DateTime.Now, Category = "طعام" };
+    private Expense expense = new() { Date = DateTime.Now};
+    private List<Category> Categories = new();
 
     private void HandelSubmit()
     {
@@ -51,4 +55,9 @@
     }
 
     private void GoBack() => Navigation.NavigateTo("/expensesList");
+
+    protected override void OnInitialized()
+    {
+        Categories = CategoryService.GetAllCategories();
+    }
 }

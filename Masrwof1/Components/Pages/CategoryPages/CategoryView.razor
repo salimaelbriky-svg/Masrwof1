@@ -1,11 +1,11 @@
 ﻿@using Masrwof1.Models
 @using Masrwof1.Interfaces
 
-@inject ICategoryServise CategoryServise
+@inject ICategoryService CategoryService
 @inject NavigationManager Navigation
 
 <div class="expense-form-container mt-4" dir="rtl" style="text-align: right;">
-    <EditForm Model="@category" OnInvalidSubmit="HandelSubmit">
+    <EditForm Model="@category" OnValidSubmit="HandelSubmit">
         <DataAnnotationsValidator/>
         <ValidationSummary/>
 
@@ -34,11 +34,11 @@
     {
         if(Id.HasValue && Id.Value != Guid.Empty)
         {
-            category = CategoryServise.GetCategoryById(Id.Value) ?? new();
+            category = CategoryService.GetCategoryById(Id.Value) ?? new();
 
             if (category.Id == Guid.Empty)
             {
-                Navigation.NavigateTo("/categorylist");
+                Navigation.NavigateTo("/categoryList");
             }
         }
     }
@@ -47,17 +47,17 @@
     {
         if(Id.HasValue && Id.Value != Guid.Empty)
         {
-            CategoryServise.updateCategory(category);
+            CategoryService.updateCategory(category);
         }
         else
         {
-            CategoryServise.AddCategorry(category);
+            CategoryService.AddCategorry(category);
         }
         GoBack();
     }
     private void GoBack()
     {
-        Navigation.NavigateTo("/categorylist");
+        Navigation.NavigateTo("/categoryList");
     }
 
 }

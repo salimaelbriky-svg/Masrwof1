@@ -3,7 +3,7 @@
 @using Masrwof1.Models
 @using Masrwof1.Interfaces
 
-@inject ICategoryServise CategoryServise
+@inject ICategoryService CategoryService
 @inject NavigationManager Navigation
 
 <div class="expense-form-container">
@@ -28,21 +28,21 @@
     private Category category = new();
     protected override void OnInitialized()
     {
-        category = CategoryServise.GetCategoryById(id) ?? new();
+        category = CategoryService.GetCategoryById(id) ?? new();
         if( category.Id == Guid.Empty)
         {
-            Navigation.NavigateTo("/categorylist");
+            Navigation.NavigateTo("/categoryList");
         }
     }
     private void HandelSubmit()
     {
-        CategoryServise.updateCategory(category);
+        CategoryService.updateCategory(category);
         GoBack();
 
     }
     private void GoBack()
     {
-        Navigation.NavigateTo("/categorylist");
+        Navigation.NavigateTo("/categoryList");
     }
 
 }

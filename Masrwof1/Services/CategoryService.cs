@@ -8,10 +8,10 @@ using System.Text;
 
 namespace Masrwof1.Services
 {
-    public class CategoryServise : ICategoryServise
+    public class CategoryService : ICategoryService
     {
         private readonly AppDbContext _context;
-        public CategoryServise(AppDbContext context)
+        public CategoryService(AppDbContext context)
         {
             _context = context;
         }
@@ -30,7 +30,7 @@ namespace Masrwof1.Services
         public void AddCategorry(Category category)
         {
             if (category == null) return;
-
+           // category.Id = Guid.NewGuid();
             _context.Categories.Add(category);
             _context.SaveChanges();
         }

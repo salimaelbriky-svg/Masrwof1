@@ -3,7 +3,7 @@
 @using Masrwof1.Models
 @using Masrwof1.Interfaces
 
-@inject ICategoryServise CategoryServise
+@inject ICategoryService CategoryService
 @inject NavigationManager Navigation
 
 <div class="expense-form-container mt-4" dir="rtl" style="text-align: right;">
@@ -27,17 +27,16 @@
 @code {
 
     private Category category = new();
-    private object CategorySevise;
 
     private void HandleSubmit()
     {
-        CategoryServise.AddCategorry(category);
+        CategoryService.AddCategorry(category);
         GoBack();
     }
 
     private void GoBack()
     {
-        Navigation.NavigateTo("/categorylist");
+        Navigation.NavigateTo("/categoryList");
     }
 
 }
